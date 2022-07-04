@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 #to save the output in the file
-fourcc = cv2.VideoWriter_fourcc(*'xvid')
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
 output_file = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
 
 #starting the webcam
@@ -41,8 +41,11 @@ while(cap.isOpened()):
     mask_1 = mask_1 + mask_2
 
     #open and expand the image when there is mask_1 color
-    mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_OPEN, np.ones((3,3)), np.uint(8))
-    mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_DILATE, np.ones((3,3)), np.unit(8))
+    # mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_OPEN, np.ones((3,3)), np.uint8) # uint8 not uint(8)
+    # mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_DILATE, np.ones((3,3)), np.uint8)#1 UINT8 NOT UNIT
+
+    mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_DILATE, np.ones((3, 3), np.uint8))
 
     #selecting only the part without mask_1
     mask_2 = cv2.bitwise_not(mask_1)
@@ -54,7 +57,7 @@ while(cap.isOpened()):
     res_2 = cv2.bitwise_and(bg, bg, mask = mask_1)
 
     #generating final output
-    final_output = cv2.addWeighted(res_1, 1, res_2, 2, 1, 0)
+    final_output = cv2.addWeighted(res_1, 1, res_2, 1, 0)#2  extra argument remove 2
     output_file.write(final_output)
 
     #displaying output to the user
